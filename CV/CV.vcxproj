@@ -209,7 +209,7 @@
     <None Include="res\CV.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\..\OPENCV\Unicreate\Unicreate\bgp.bmp" />
+    <Image Include="res\bitmap_b.bmp" />
     <Image Include="res\CV.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

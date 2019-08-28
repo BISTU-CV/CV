@@ -62,7 +62,7 @@
     <Image Include="res\CV.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\..\OPENCV\Unicreate\Unicreate\bgp.bmp">
+    <Image Include="res\bitmap_b.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
