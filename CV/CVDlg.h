@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include"CCalibDlg.h"
 // CCVDlg 对话框
 class CCVDlg : public CDialogEx
 {
@@ -12,6 +12,8 @@ public:
 	CCVDlg(CWnd* pParent = nullptr);	// 标准构造函数
 	virtual ~CCVDlg();
 	POINT Old;//存放对话框的宽和高。
+	static CCVDlg *pTestdlg;
+CCalibDlg *dlg;
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CV_DIALOG };
@@ -27,6 +29,8 @@ protected:
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
+	
+	//void ShowImage(const Mat & mat, UINT ID);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -69,4 +73,8 @@ public:
 	afx_msg void OnAdjustCalibrate();
 	// 标定信息
 	CString CALIB_INFO;
+	afx_msg void OnBnClickedtest();
+	//void ShowImage(const Mat & mat, UINT ID);
+
+	afx_msg void OnClose();
 };

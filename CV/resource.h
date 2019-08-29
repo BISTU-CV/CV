@@ -40,6 +40,10 @@
 #define IDC_FPS                         1044
 #define IDC_W                           1048
 #define IDC_H                           1049
+#define IDC_STATIC_test                 1052
+#define IDC_BUTTON1                     1053
+#define IDC_test                        1053
+#define IDC_MODEL                       1053
 #define ID_FILE_EDIT                    32771
 #define ID_FILE_SAVEAS                  32772
 #define ID_FILE_EXIT                    32773
@@ -90,14 +94,15 @@
 #define ID_ANALYZE_123                  32818
 #define ID_Menu32819                    32819
 #define ID_INITIALIZE_UNDOALLOPERATIONS 32820
+#define ID_ANALYZE_SETMODEL             32821
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        141
-#define _APS_NEXT_COMMAND_VALUE         32821
-#define _APS_NEXT_CONTROL_VALUE         1052
+#define _APS_NEXT_COMMAND_VALUE         32822
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

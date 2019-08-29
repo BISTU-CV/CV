@@ -184,6 +184,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CCalibDlg.h" />
     <ClInclude Include="CV.h" />
     <ClInclude Include="CVDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CCalibDlg.cpp" />
     <ClCompile Include="CV.cpp" />
     <ClCompile Include="CVDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

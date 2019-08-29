@@ -1,6 +1,6 @@
 ﻿
 // CVDlg.cpp: 实现文件
-//
+
 #include "opencv2/opencv.hpp"
 #include "stdafx.h"
 #include"math.h"
@@ -9,12 +9,15 @@
 #include "afxdialogex.h"
 #include <iostream>
 #include <fstream>
-#include"CALIBdLG.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-using namespace std;  using namespace cv;
+
+using namespace std;  
+using namespace cv;
+CCVDlg *CCVDlg::pTestdlg = NULL;  //注意要写在类外，不要写在类实现函数里面。
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 Mat frame, image; //定义一个Mat变量，用于存储每一帧的图像  
@@ -44,6 +47,7 @@ public:
 	afx_msg void OnBnClickedYes();
 	afx_msg void OnBnClickedGet();
 	afx_msg void OnBnClickedSCalib();
+	afx_msg void OnBnClickedModel();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -59,6 +63,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 	ON_BN_CLICKED(ID_YES, &CAboutDlg::OnBnClickedYes)
 	ON_BN_CLICKED(IDC_GET, &CAboutDlg::OnBnClickedGet)
 	ON_BN_CLICKED(IDC_S_CALIB, &CAboutDlg::OnBnClickedSCalib)
+	ON_BN_CLICKED(IDC_MODEL, &CAboutDlg::OnBnClickedModel)
 END_MESSAGE_MAP()
 
 ///////////////////////////////////////////////////////Main Menu
@@ -68,7 +73,7 @@ CCVDlg::CCVDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CV_DIALOG, pParent)
 	, HEIGHT(_T(""))
 	, WIDTH(_T(""))
-	, CALIB_INFO(_T(""))
+	, CALIB_INFO(_T("NIANFI"))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -123,6 +128,10 @@ BEGIN_MESSAGE_MAP(CCVDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_OFF, &CCVDlg::OnBnClickedOff)
 	ON_BN_CLICKED(IDC_CAPTURE, &CCVDlg::OnBnClickedCapture)
 	ON_COMMAND(ID_ADJUST_CALIBRATE, &CCVDlg::OnAdjustCalibrate)
+	ON_BN_CLICKED(IDC_test, &CCVDlg::OnBnClickedtest)
+
+
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -160,18 +169,20 @@ BOOL CCVDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-	
-		namedWindow("REALIMAGE", WINDOW_AUTOSIZE);
-		HWND hWnd = (HWND)cvGetWindowHandle("REALIMAGE");
-		HWND hParent = ::GetParent(hWnd);
-		::SetParent(hWnd, GetDlgItem(IDC_RT)->m_hWnd);
-		::ShowWindow(hParent, SW_HIDE);
-		GetDlgItem(IDC_RT)->GetClientRect(&pic_rect);
-		width = pic_rect.right;
-		height = pic_rect.bottom;
-		Mat src = imread("OFF.jpg");
-		resize(src, src, Size(width, height));
-		imshow("REALIMAGE", src);
+	pTestdlg = this;  //为这个之前定义的指针变量赋值为主对话框指针
+	namedWindow("REALIMAGE", WINDOW_AUTOSIZE);
+	HWND hWnd = (HWND)cvGetWindowHandle("REALIMAGE");
+	HWND hParent = ::GetParent(hWnd);
+	::SetParent(hWnd, GetDlgItem(IDC_RT)->m_hWnd);
+	::ShowWindow(hParent, SW_HIDE);
+	GetDlgItem(IDC_RT)->GetClientRect(&pic_rect);
+	width = pic_rect.right;
+	height = pic_rect.bottom;
+	Mat src = imread("OFF.jpg");
+	resize(src, src, Size(width, height));
+	imshow("REALIMAGE", src);
+
+
 
 		namedWindow("Catch", WINDOW_AUTOSIZE);
 		HWND hWnd1 = (HWND)cvGetWindowHandle("Catch");
@@ -184,10 +195,53 @@ BOOL CCVDlg::OnInitDialog()
 		Mat src1 = imread("init.jpg");
 		resize(src1, src1, Size(width1, height1));
 		imshow("Catch", src1);
-
-
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
+////void ShowImage(const char* winname, InputArray mat, UINT ID)
+//void CCVDlg::ShowImage(const Mat &mat, UINT ID)
+//{
+//	//	//把CImage转化为Mat
+//	//CImage image,scaledImage;
+//	//Mat img,img1;
+//	//	MatCImage MatCImage;
+//	//	MatCImage.CImageToMat(image, img);
+//	//	GetDlgItem(IDC_STATIC)->GetClientRect(&rect);
+//	//	resize(img, scaledImage, Size(rect.Width(), rect.Height()));
+//	//	if (!scaledImage.data)
+//	//	{
+//	//		MatCImage.MatToCImage(scaledImage, img1);
+//	//	}
+//
+//
+//
+//	//CDC *pDC = GetDlgItem(ID)->GetDC();//根据ID获得窗口指针再获取与该窗口关联的上下文指针
+//	//HDC hdc = pDC->GetSafeHdc();
+//	//CRect rect;
+//	//GetDlgItem(ID)->GetClientRect(&pic_rect); //获取box1客户区
+//	//CWnd *pWnd = GetDlgItem(IDC_STATIC);//获得pictrue控件窗口的句柄   
+//	//CDC *pDC = pWnd->GetDC();//获得pictrue控件的DC  
+//	//CImage src;
+//	//MatCImage MatCImage;
+//	//MatCImage.MatToCImage(img, img_show);
+//	//	src.Draw(pDC->m_hDC, rect); //将图片画到Picture控件表示的矩形区域    
+//	//
+//	//
+//	//Mat src; // 定义IplImage指针变量src     
+//	//src = imread("E:\\二值像素图像保存\\8_3\\aa\\7_6\\suanzi\\len图像_几种算子结果\\1_canny算子结果.bmp", -1); // 将src指向当前工程文件目录下的图像me.bmp    
+//	//src.DrawToHDC(hdc, &pic_rect);
+//	//ReleaseDC(pDC);
+//	namedWindow("winname", WINDOW_AUTOSIZE);
+//	HWND hWnd = (HWND)cvGetWindowHandle("winname");
+//	HWND hParent = ::GetParent(hWnd);
+//	::SetParent(hWnd, GetDlgItem(ID)->m_hWnd);
+//	::ShowWindow(hParent, SW_HIDE);
+//	GetDlgItem(ID)->GetClientRect(&pic_rect);
+//	width = pic_rect.right;
+//	height = pic_rect.bottom;
+//	Mat src;
+//	resize(mat, src, Size(width, height));
+//	imshow("winname", src);
+//}
 
 void CCVDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -324,6 +378,7 @@ HBRUSH CCVDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)/////////////////
 void CCVDlg::OnFileOpen()
 {
 	// TODO: 在此添加命令处理程序代码
+	
 	String FPathName;
 	CString FilePathName;
 	CString defaultDir = "";	//默认文件路径	
@@ -1073,15 +1128,15 @@ void CCVDlg::OnAnalyzeOutputsize()
 			return;
 		}
 		
-			UpdateData(TRUE);
-			str1 = (_T("")); str2 = (_T(""));
-			HEIGHT = str1;
-			WIDTH = str2;
-			HEIGHT.Format(_T("%.3f"), G_width);
-			WIDTH.Format(_T("%.3f"), G_height);
+		
+			//str1 = (_T("")); str2 = (_T(""));
+			WIDTH.Format(_T("%.3f"), G_width);
+			HEIGHT.Format(_T("%.3f"), G_height);
+			GetDlgItem(IDC_HEIGHT)->SetWindowText(HEIGHT);
+			GetDlgItem(IDC_WIDTH)->SetWindowText(WIDTH);
 		/*	WIDTH.SetWindowText(str1);
 			HEIGHT.SetWindowText(str2);*/
-			UpdateData(FALSE);
+			UpdateData(TRUE);
 			remove("MEASURE.JPG");
 
 }
@@ -1090,9 +1145,13 @@ void CCVDlg::OnAnalyzeOutputsize()
 void CCVDlg::OnAdjustSetcamera()
 {
 	// TODO: 在此添加命令处理程序代码
-	CAboutDlg*dlg = new CAboutDlg;//非模态
-	dlg->Create(IDD_CALIBRATION, this);    //第一个参数是对话框ID号
-	dlg->ShowWindow(SW_SHOW);
+	//CCalibDlg*dlg = new CCalibDlg;//非模态
+	//dlg->Create(IDD_CALIBRATION, this);    //第一个参数是对话框ID号
+	//dlg->ShowWindow(SW_SHOW);
+	CCalibDlg dlgB; // 新建B对话框的对象 
+	dlgB.DoModal();
+	
+		
 }
 ////
 
@@ -1101,6 +1160,12 @@ void CCVDlg::OnAdjustSetcamera()
 
 void CCVDlg::OnBnClickedOn()
 {
+	CString str="vasv";
+	//str = dlg->INFO;
+	//GetDlgItem(dlg->IDC_CDATA)->SetWindowText(str);
+			/*str1=(_T(" "));str2=(_T(" "));
+			WIDTH.SetWindowText(str1);HEIGHT.SetWindowText(str2);*/
+	//dlg->GetDlgItem(IDC_CDATA);
 	// TODO: 在此添加控件通知处理程序代码
 	VideoCapture Capture(0);
 	FLAG = TRUE;
@@ -1190,32 +1255,7 @@ void CCVDlg::OnAdjustCalibrate()
 	void CAboutDlg::OnBnClickedGet()
 	{
 		// TODO: 在此添加控件通知处理程序代码
-		VideoCapture Capture(0);
-		int b = 10;
-		CString file;
-		if (!Capture.isOpened())
-		{
-			AfxMessageBox(_T("Unable to establish link with camera！"));
-			return;
-		}
-		if (FLAG == FALSE)
-		{
-			AfxMessageBox(_T("Plesae turn on your device before this step!"));
-			return;
-		}
-		AfxMessageBox(_T("Notice:Please put the calibration board in the effective range of the camera! Click the button to capture calibration board image information from the camera!"));
-		for (int i = 1; i <= b; i++)
-		{
-			Capture >> frame;
-			file.Format(_T("chess%d.bmp"), i);
-			resize(frame, frame, Size(width, height));
-			imshow("REALIMAGE", frame);
-			AfxMessageBox(_T("This is " + file));
-			imwrite(String(file), frame);
-			waitKey(30);
-		}
-		FLAG = FALSE;
-		return;
+		
 	}
 
 
@@ -1238,7 +1278,8 @@ void CCVDlg::OnAdjustCalibrate()
 			image_count++;
 			// 用于观察检验输出
 			//cout << "image_count = " << image_count << endl;
-			/*INFO.Format(_T("image_count=%d"), image_count);*/
+			/*INFO.calibdlg;
+			INFO.Format(_T("image_count=%d"), image_count);*/
 			///* 输出检验*/
 			//cout << "-->count = " << count;
 			Mat imageInput = imread(filename);
@@ -1422,4 +1463,111 @@ void CCVDlg::OnAdjustCalibrate()
 		UpdateData(TRUE);
 		
 		return;
+	}
+
+
+	void CCVDlg::OnBnClickedtest()
+	{
+		// TODO: 在此添加控件通知处理程序代码
+		Mat src = imread("init.jpg");
+		//ShowImage("in", src, IDC_STATIC_test);
+	}
+
+
+	void CAboutDlg::OnBnClickedModel()
+	{
+		// TODO: 在此添加控件通知处理程序代码
+		Mat srcImage;
+		Mat grayImage;
+		system("color 1F");
+		srcImage = imread("capture.jpg", 1);
+		if (!srcImage.data)
+		{
+			AfxMessageBox(_T("No preprocessing image！"));
+			return;
+		}
+		cvtColor(srcImage, grayImage, COLOR_BGR2GRAY);
+		GaussianBlur(grayImage, grayImage, Size(7, 7), 0);
+		Canny(grayImage, grayImage, 50, 100);
+		Mat element = getStructuringElement(MORPH_RECT, Size(15, 15)); //隔开物体
+		dilate(grayImage, grayImage, element);//膨胀
+		erode(grayImage, grayImage, element);//腐蚀
+
+		//寻找轮廓
+		findContours(grayImage, g_vContours, g_vHierarchy, CV_RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		std::sort(g_vContours.begin(), g_vContours.end(), ContoursSortFun);//按照从左到右 排序
+		for (unsigned i = 0; i < g_vContours.size(); i++)
+		{
+			if (contourArea(g_vContours[i]) < 100)//面积太小 则忽略
+				continue;
+			RotatedRect box = minAreaRect(g_vContours[i]);
+
+			Point2f boxPoints[4];
+
+			box.points(boxPoints);
+
+			Point2f pointA = midpoint(boxPoints[0], boxPoints[1]);
+
+			Point2f pointB = midpoint(boxPoints[1], boxPoints[2]);
+
+			Point2f pointC = midpoint(boxPoints[2], boxPoints[3]);
+
+			Point2f pointD = midpoint(boxPoints[3], boxPoints[0]);
+
+			circle(srcImage, pointA, 2, Scalar(0, 0, 255));
+
+			circle(srcImage, pointB, 2, Scalar(0, 0, 255));
+
+			circle(srcImage, pointC, 2, Scalar(0, 0, 255));
+
+			circle(srcImage, pointD, 2, Scalar(0, 0, 255));
+
+
+			line(srcImage, pointA, pointC, Scalar(255, 0, 0));
+
+			line(srcImage, pointD, pointB, Scalar(255, 0, 0));
+
+			double dWidth = getDistance(pointA, pointC);
+
+			double dHeight = getDistance(pointD, pointB);
+
+			if (g_bFirst) {
+
+				g_dPixelsPerMetric = dWidth / g_dReferWidth; //计算像素与实际大小的比列
+
+			//	cout << "pixelPerMetric:" << dWidth << " " << g_dReferWidth << "  " << g_dPixelsPerMetric;
+
+				g_bFirst = false;
+
+			}
+			//	cout << "dWidth" << dWidth << "   " << dHeight << "      " << dWidth / g_dPixelsPerMetric << "    " << dHeight / g_dPixelsPerMetric;
+
+			putText(srcImage, format("%.3f*%.3f",
+				dWidth / g_dPixelsPerMetric,
+				dHeight / g_dPixelsPerMetric),
+				/*boxPoints[1]*/
+				pointB,
+				FONT_HERSHEY_SIMPLEX, 0.4, Scalar(255, 0, 0));
+			G_width = dWidth / g_dPixelsPerMetric;
+			G_height = dHeight / g_dPixelsPerMetric;
+
+			for (int i = 0; i <= 3; i++)
+
+			{
+				line(srcImage, boxPoints[i], boxPoints[(i + 1) % 4], Scalar(0, 0, 255));
+			}
+
+		}
+		imwrite("measure.jpg", srcImage);
+		imshow("Catch", srcImage);
+		return;
+
+	}
+
+
+	void CCVDlg::OnClose()
+	{
+		// TODO: 在此添加消息处理程序代码和/或调用默认值
+		FLAG = FALSE;
+		CDialogEx::OnClose();
 	}
